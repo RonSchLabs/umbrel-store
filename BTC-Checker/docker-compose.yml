@@ -13,3 +13,5 @@ services:
     init: true
     volumes:
       - ${APP_DATA_DIR}/data:/data
+    ports:
+      - "34277:34277"
