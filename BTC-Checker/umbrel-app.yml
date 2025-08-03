@@ -1,5 +1,5 @@
 manifestVersion: 1
-id: BTC-Checker
+id: ronschronsch-btc-checker
 name: BTC Checker
 tagline: Live BTC Wallet Monitor
 icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/main/BTC-Checker/umbrel/icon.png
