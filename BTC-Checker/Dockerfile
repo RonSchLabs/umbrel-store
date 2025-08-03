@@ -19,4 +19,4 @@ ENV BTC_MODE=umbrel
 USER 1000:1000
 
 # Anwendung starten
-CMD ["python", "./app.py"]
+CMD ["python", "/app/app.py"]
