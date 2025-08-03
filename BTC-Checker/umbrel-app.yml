@@ -1,0 +1,22 @@
+manifestVersion: 1
+id: BTC-Checker
+name: BTC Checker
+tagline: Live BTC Wallet Monitor
+icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/main/BTC-Checker/umbrel/icon.png
+category: Utilities
+version: "0.1.0"
+port: 34277
+description: >-
+  Dieses Tool sucht automatisch nach BTC-Wallets mit Guthaben und zeigt Statistiken im Web-UI an.
+developer:
+  name: Ronny
+repo: https://github.com/RonSchRonSch/umbrel-store-2/tree/main/BTC-Checker
+support: https://github.com/RonSchRonSch/umbrel-store-2/issues
+gallery:
+  - https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/main/BTC-Checker/umbrel/icon.png
+releaseNotes: >-
+  Erstveröffentlichung des BTC Checker.
+dependencies: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
