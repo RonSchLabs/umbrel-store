@@ -6,6 +6,9 @@ WORKDIR /app
 # Quellcode kopieren
 COPY ./app /app
 
+# requirements.txt separat kopieren
+COPY requirements.txt .
+
 # Anforderungen installieren
 RUN pip install --no-cache-dir -r requirements.txt
 
