@@ -1,22 +1,19 @@
 FROM python:3.11-slim
 
-# Arbeitsverzeichnis
+# Setze Arbeitsverzeichnis
 WORKDIR /app
 
-# Quellcode kopieren
+# Kopiere Quellcode
 COPY ./app /app
 
-# requirements.txt separat kopieren
-COPY requirements.txt .
+# Kopiere requirements separat
+COPY requirements.txt /app
 
-# Anforderungen installieren
+# Installiere Abhängigkeiten
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Umbrel-Modus aktivieren
+# Setze Umgebungsvariablen
 ENV BTC_MODE=umbrel
 
-# Als unprivilegierter Benutzer laufen lassen
-USER 1000:1000
-
-# Anwendung starten
-CMD ["python", "/app/app.py"]
+# Starte Anwendung
+CMD ["python3", "app.py"]
