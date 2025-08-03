@@ -2,7 +2,7 @@ manifestVersion: 1
 id: ronschronsch-btc-checker
 name: BTC Checker
 tagline: Live BTC Wallet Monitor
-icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/main/BTC-Checker/umbrel/icon.png
+icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/master/BTC-Checker/umbrel/icon.png
 category: Utilities
 version: "0.1.0"
 port: 34277
@@ -13,7 +13,7 @@ developer:
 repo: https://github.com/RonSchRonSch/umbrel-store-2/tree/main/BTC-Checker
 support: https://github.com/RonSchRonSch/umbrel-store-2/issues
 gallery:
-  - https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/main/BTC-Checker/umbrel/icon.png
+  - https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/master/BTC-Checker/umbrel/icon.png
 releaseNotes: >-
   Erstveröffentlichung des BTC Checker.
 dependencies: []
