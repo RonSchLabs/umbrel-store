@@ -1,6 +1,1 @@
 flask
-mnemonic
-ecdsa
-base58
-requests
-bech32
