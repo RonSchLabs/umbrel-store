@@ -8,6 +8,6 @@ services:
       APP_PORT: 5001
 
   server:
-    image: yourdockerhubuser/ronschronsch-btc-checker:latest
+    image: dpg4sry/ronschronsch-btc-checker:1.0.0
     user: "1000:1000"
     init: true
