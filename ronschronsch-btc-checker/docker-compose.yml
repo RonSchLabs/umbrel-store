@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  app_proxy:
+    environment:
+      # Format: <app-id>_<docker-service-name>_1
+      APP_HOST: ronschronsch-btc-checker_server_1
+      APP_PORT: 5001
+
+  server:
+    image: yourdockerhubuser/ronschronsch-btc-checker:latest
+    user: "1000:1000"
+    init: true
