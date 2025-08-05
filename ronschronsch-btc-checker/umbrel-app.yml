@@ -4,7 +4,7 @@ name: BTC Checker
 tagline: Live BTC‑Wallet‑Monitor  # kurzer Untertitel
 icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store/master/ronschronsch-btc-checker/icon.png # URL zu einem PNG/SVG‑Icon
 category: Utilities  # Kategorie (z. B. Utilities, Development, Crypto)
-version: "1.0.0"
+version: "1.0.2"
 port: 5001  # Port, auf dem der Webserver im Container läuft
 description: >-
   Ein kleines Python‑Tool zur Anzeige von BTC‑Wallet‑Informationen.

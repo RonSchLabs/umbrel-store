@@ -8,7 +8,7 @@ WORKDIR /app
 COPY app/ /app/
 
 # Abhängigkeiten installieren (falls nötig)
-RUN pip install flask
+RUN pip install flask mnemonic ecdsa base58 bech32 requests
 
 # Port, auf dem Flask läuft (muss mit dem Port in umbrel-app.yml übereinstimmen)
 EXPOSE 5001
