@@ -10,7 +10,7 @@ description: >-
   Dieses Tool sucht automatisch nach BTC-Wallets mit Guthaben und zeigt Statistiken im Web-UI an.
 developer:
   name: Ronny
-repo: https://github.com/RonSchRonSch/umbrel-store-2/tree/main/BTC-Checker
+repo: https://github.com/RonSchRonSch/umbrel-store-2/tree/master/BTC-Checker
 support: https://github.com/RonSchRonSch/umbrel-store-2/issues
 gallery:
   - https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/master/BTC-Checker/umbrel/icon.png
