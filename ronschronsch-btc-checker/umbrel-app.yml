@@ -2,7 +2,7 @@ manifestVersion: 1
 id: ronschronsch-btc-checker
 name: BTC Checker
 tagline: Live BTC‑Wallet‑Monitor  # kurzer Untertitel
-icon: https://example.com/icon.png  # URL zu einem PNG/SVG‑Icon
+icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store-2/master/ronschronsch-btc-checker/icon.png # URL zu einem PNG/SVG‑Icon
 category: Utilities  # Kategorie (z. B. Utilities, Development, Crypto)
 version: "1.0.0"
 port: 5000  # Port, auf dem der Webserver im Container läuft
