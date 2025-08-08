@@ -15,7 +15,6 @@ submitter: RonSch
 repo: https://github.com/RonSchRonSch/umbrel-store
 support: https://github.com/RonSchRonSch/umbrel-store/issues
 gallery:
-  - gallery:
   - https://raw.githubusercontent.com/RonSchRonSch/umbrel-store/master/ronschronsch-btc-checker/screenshot.png
 releaseNotes: >-
   Initiale Version.
