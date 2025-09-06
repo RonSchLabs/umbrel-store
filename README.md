@@ -19,7 +19,7 @@ Ein Tool zur automatisierten Suche nach Bitcoin-Adressen mit Guthaben, basierend
 1. Community App-Store in Umbrel hinzufügen:
 
 ```
-https://github.com/RonSchRonSch/umbrel-store
+https://github.com/RonSchLabs/umbrel-store
 ```
 
 
@@ -55,4 +55,4 @@ Dieses Tool dient ausschließlich **zu Forschungs- und Lernzwecken**.
 ## 🛠️ Entwickler
 
 - Docker-Image: `dpg4sry/ronschronsch-btc-checker`
-- Umbrel-App Store: [`umbrel-store`](https://github.com/RonSchRonSch/umbrel-store)
+- Umbrel-App Store: [`umbrel-store`](https://github.com/RonSchLabs/umbrel-store)
