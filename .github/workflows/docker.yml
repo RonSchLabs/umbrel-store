@@ -8,10 +8,12 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -31,11 +33,12 @@ jobs:
             echo "TAG=latest" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build & Push (ronschlabs/btc-checker)
+      - name: Build & Push (multi-arch)
         uses: docker/build-push-action@v6
         with:
           context: ./ronschlabs-btc-checker
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ronschlabs/btc-checker:${{ steps.meta.outputs.TAG }}
             ronschlabs/btc-checker:latest
