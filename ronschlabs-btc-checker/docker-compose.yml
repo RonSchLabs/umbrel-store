@@ -3,11 +3,12 @@ version: "3.7"
 services:
   app_proxy:
     environment:
-      # Format: <app-id>_<docker-service-name>_1
-      APP_HOST: ronschlabs-btc-checker_server_1
+      APP_HOST: app
       APP_PORT: 5001
 
-  server:
-    image: dpg4sry/ronschlabs-btc-checker:1.0.2
+  app:
+    image: ronschlabs/btc-checker:1.0.2
     user: "1000:1000"
     init: true
+    restart: on-failure
+    stop_grace_period: 1m
