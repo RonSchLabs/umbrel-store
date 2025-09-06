@@ -48,11 +48,11 @@ Dieses Tool dient ausschließlich **zu Forschungs- und Lernzwecken**.
 
 ## 📷 Vorschau
 
-![Screenshot](https://raw.githubusercontent.com/dpg4sry/umbrel-store/main/ronschronsch-btc-checker/icon.png)
+![Screenshot](https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/icon.png)
 
 ---
 
 ## 🛠️ Entwickler
 
-- Docker-Image: `dpg4sry/ronschronsch-btc-checker`
+- Docker-Image: `ronschlabs/btc-checker`
 - Umbrel-App Store: [`umbrel-store`](https://github.com/RonSchLabs/umbrel-store)

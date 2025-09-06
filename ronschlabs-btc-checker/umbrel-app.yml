@@ -1,8 +1,8 @@
 manifestVersion: 1
-id: ronschronsch-btc-checker
+id: ronschlabs-btc-checker
 name: BTC Checker
 tagline: Live BTC‑Wallet‑Monitor  # kurzer Untertitel
-icon: https://raw.githubusercontent.com/RonSchRonSch/umbrel-store/master/ronschronsch-btc-checker/icon.png # URL zu einem PNG/SVG‑Icon
+icon: https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/icon.png # URL zu einem PNG/SVG‑Icon
 category: Utilities  # Kategorie (z. B. Utilities, Development, Crypto)
 version: "1.0.2"
 port: 5001  # Port, auf dem der Webserver im Container läuft
@@ -10,15 +10,19 @@ description: >-
   Ein kleines Python‑Tool zur Anzeige von BTC‑Wallet‑Informationen.
   Hier können Sie mehrere Zeilen Text schreiben.
 developer: RonSch
-website: https://github.com/RonSchRonSch/umbrel-store
+website: https://github.com/RonSchLabs/umbrel-store
 submitter: RonSch
-repo: https://github.com/RonSchRonSch/umbrel-store
-support: https://github.com/RonSchRonSch/umbrel-store/issues
+repo: https://github.com/RonSchLabs/umbrel-store
+support: https://github.com/RonSchLabs/umbrel-store/issues
 gallery:
-  - https://raw.githubusercontent.com/RonSchRonSch/umbrel-store/master/ronschronsch-btc-checker/screenshot.png
+  - https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/screenshot.png
 releaseNotes: >-
   Initiale Version.
 dependencies: []
 path: ""  # leer lassen, wenn Ihr Webserver auf / antwortet
 defaultUsername: ""
 defaultPassword: ""
+image:
+  type: docker
+  repository: ronschlabs/btc-checker
+  tag: latest
