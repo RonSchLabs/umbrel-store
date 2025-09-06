@@ -4,10 +4,10 @@ services:
   app_proxy:
     environment:
       # Format: <app-id>_<docker-service-name>_1
-      APP_HOST: ronschronsch-btc-checker_server_1
+      APP_HOST: ronschlabs-btc-checker_server_1
       APP_PORT: 5001
 
   server:
-    image: dpg4sry/ronschronsch-btc-checker:1.0.2
+    image: dpg4sry/ronschlabs-btc-checker:1.0.2
     user: "1000:1000"
     init: true
