@@ -7,7 +7,7 @@ services:
       APP_PORT: 5001
 
   app:
-    image: ronschlabs/btc-checker:1.0.2
+    image: ronschlabs/btc-checker:latest
     user: "1000:1000"
     init: true
     restart: on-failure
