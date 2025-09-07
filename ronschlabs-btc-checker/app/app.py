@@ -4,6 +4,9 @@ from mnemonic import Mnemonic
 from bech32 import bech32_encode, convertbits
 from flask import Flask, send_from_directory
 
+__version__ = "1.1"
+print(f"[INFO] BTC Checker Version: {__version__}")
+
 # Flask App starten
 app = Flask(__name__)
 status = {
