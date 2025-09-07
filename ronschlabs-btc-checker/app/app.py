@@ -32,47 +32,82 @@ def db_connect():
     # Eine kurze Verbindung pro Operation ist hier okay
     return sqlite3.connect(DB_PATH, check_same_thread=False)
 
+
 def db_init():
-    os.makedirs(SAVE_DIR, exist_ok=True)
-    with db_connect() as con:
-        cur = con.cursor()
-        # Eine Zeile für kumulierte Werte
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS stats (
-                id INTEGER PRIMARY KEY CHECK (id=1),
-                total_hours REAL NOT NULL DEFAULT 0.0,
-                total_checked INTEGER NOT NULL DEFAULT 0,
-                updated_at TEXT NOT NULL
-            )
-        """)
-        # Trefferliste
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS finds (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ts TEXT NOT NULL,
-                addr TEXT NOT NULL,
-                typ TEXT NOT NULL,
-                balance_btc REAL NOT NULL,
-                seed TEXT NOT NULL
-            )
-        """)
-        # Seed-Werte nur beim ersten Start anlegen
-        cur.execute("SELECT COUNT(*) FROM stats")
-        cnt = cur.fetchone()[0]
-        if cnt == 0:
-            cur.execute(
-                "INSERT INTO stats (id, total_hours, total_checked, updated_at) VALUES (1, ?, ?, ?)",
-                (240.0, 1_500_000, datetime.utcnow().isoformat())
-            )
-        # Leerer Beispiel-Eintrag in finds (nur wenn leer)
-        cur.execute("SELECT COUNT(*) FROM finds")
-        fcnt = cur.fetchone()[0]
-        if fcnt == 0:
-            cur.execute(
-                "INSERT INTO finds (ts, addr, typ, balance_btc, seed) VALUES (?,?,?,?,?)",
-                (datetime.utcnow().isoformat(), "", "", 0.0, "")
-            )
-        con.commit()
+  """Initialisiert die SQLite-DB ohne /data anzulegen.
+  - Nutzt /data nur, wenn es existiert UND beschreibbar ist.
+  - Fällt sonst auf '.' zurück.
+  - Legt Tabellen + Startwerte an.
+  """
+  import sqlite3
+  from datetime import datetime
+  global SAVE_DIR, DB_PATH
+
+  # Zielverzeichnis bestimmen (Umbrel bevorzugt /data)
+  desired_dir = "/data" if IS_UMBREL else "."
+  save_dir = desired_dir
+
+  # /data niemals selbst anlegen; nur nutzen, wenn vorhanden + schreibbar
+  if os.path.isabs(save_dir):
+    if not (os.path.isdir(save_dir) and os.access(save_dir, os.W_OK)):
+      print("[WARN] /data nicht verfügbar oder nicht schreibbar – falle auf lokalen Ordner zurück.")
+      save_dir = "."
+  else:
+    # Lokale Pfade dürfen wir anlegen
+    os.makedirs(save_dir, exist_ok=True)
+
+  # Globale Pfade aktualisieren
+  SAVE_DIR = save_dir
+  DB_PATH = os.path.join(SAVE_DIR, "btc-checker.db")
+  print(f"[INFO] DB-Pfad: {DB_PATH}")
+
+  # DB öffnen + Basis-Setup
+  con = sqlite3.connect(DB_PATH, check_same_thread=False)
+  cur = con.cursor()
+  # leichte Robustheit/Performance
+  cur.execute("PRAGMA journal_mode=WAL;")
+  cur.execute("PRAGMA synchronous=NORMAL;")
+
+  # Eine Zeile mit kumulierten Werten
+  cur.execute("""
+              CREATE TABLE IF NOT EXISTS stats (
+                  id INTEGER PRIMARY KEY CHECK (id=1),
+                  total_hours REAL NOT NULL DEFAULT 0.0,
+                  total_checked INTEGER NOT NULL DEFAULT 0,
+                  updated_at TEXT NOT NULL
+                  )
+              """)
+
+  # Trefferliste
+  cur.execute("""
+              CREATE TABLE IF NOT EXISTS finds (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  ts TEXT NOT NULL,
+                  addr TEXT NOT NULL,
+                  typ TEXT NOT NULL,
+                  balance_btc REAL NOT NULL,
+                  seed TEXT NOT NULL
+              )
+              """)
+
+  # Startwerte nur beim allerersten Mal
+  cur.execute("SELECT COUNT(*) FROM stats")
+  if cur.fetchone()[0] == 0:
+    cur.execute(
+      "INSERT INTO stats (id, total_hours, total_checked, updated_at) VALUES (1, ?, ?, ?)",
+      (240.0, 1_500_000, datetime.utcnow().isoformat())
+    )
+
+  # Beispiel-/Platzhalter-Eintrag für finds (nur wenn leer)
+  cur.execute("SELECT COUNT(*) FROM finds")
+  if cur.fetchone()[0] == 0:
+    cur.execute(
+      "INSERT INTO finds (ts, addr, typ, balance_btc, seed) VALUES (?,?,?,?,?)",
+      (datetime.utcnow().isoformat(), "", "", 0.0, "")
+    )
+
+  con.commit()
+  con.close()
 
 def db_get_stats():
     with db_connect() as con:
