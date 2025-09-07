@@ -17,6 +17,8 @@ services:
     init: true
     restart: on-failure
     stop_grace_period: 1m
+    environment:
+      BTC_MODE: umbrel          # ← neu: erzwingt /data
     logging:
       driver: json-file
       options:
