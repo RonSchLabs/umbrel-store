@@ -254,10 +254,12 @@ def format_ts_de(ts: str) -> str:
 
 
 # ---- Favicon
-@app.route('/favicon.ico')
+@app.route("/favicon.ico")
 def favicon():
     return send_from_directory(
-        app.static_folder, 'icon.png', mimetype='image/png'
+        app.static_folder,
+        "favicon.ico",
+        mimetype="image/x-icon"
     )
 
 # ---- Web-UI
@@ -301,7 +303,7 @@ def show_status():
 <head>
 <meta charset="utf-8" />
 <title>BTC Checker · v{__version__}</title>
-<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.ico?v=201" type="image/x-icon">
 <meta http-equiv="refresh" content="{refresh}">
 <style>
  body{{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;max-width:880px;margin:32px auto;padding:0 16px}}
