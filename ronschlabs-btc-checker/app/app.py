@@ -4,7 +4,7 @@ from mnemonic import Mnemonic
 from bech32 import bech32_encode, convertbits
 from flask import Flask, send_from_directory, request
 
-__version__ = "2.0.1"
+__version__ = "2.1"
 
 # Flask App
 app = Flask(__name__, static_folder="static")
