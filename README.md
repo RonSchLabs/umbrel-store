@@ -54,7 +54,7 @@ Dieses Tool dient ausschließlich **zu Forschungs- und Lernzwecken**.
 
 ## 📷 Vorschau
 
-![Screenshot](https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/icon.png)
+![Screenshot](https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/screenshot.png)
 
 ---
 
