@@ -227,6 +227,32 @@ def suchroutine():
                 )
                 sys.stdout.flush()
 
+def format_int_de(n: int) -> str:
+  # 1_234_567 -> "1.234.567"
+  return f"{int(n):,}".replace(",", ".")
+
+
+def format_total_hours_human(total_hours: float) -> str:
+  total_seconds = int(round(total_hours * 3600))
+  minutes, _ = divmod(total_seconds, 60)
+  hours, minutes = divmod(minutes, 60)
+  days, hours = divmod(hours, 24)
+  parts = []
+  if days: parts.append(f"{days} Tag{'e' if days != 1 else ''}")
+  if hours: parts.append(f"{hours} Stunde{'n' if hours != 1 else ''}")
+  if minutes or not parts: parts.append(f"{minutes} Minute{'n' if minutes != 1 else ''}")
+  return ", ".join(parts)
+
+
+def format_ts_de(ts: str) -> str:
+  # ISO aus DB -> "DD.MM.YYYY HH:MM"
+  try:
+    dt = datetime.fromisoformat(ts)
+  except Exception:
+    return ts  # Fallback: Rohwert anzeigen
+  return dt.strftime("%d.%m.%Y %H:%M")
+
+
 # ---- Favicon
 @app.route('/favicon.ico')
 def favicon():
@@ -237,6 +263,7 @@ def favicon():
 # ---- Web-UI
 _last_persisted_checked = 0  # Session-Helfer
 
+@app.route("/")
 @app.route("/")
 def show_status():
     global _last_persisted_checked
@@ -255,10 +282,16 @@ def show_status():
 
     total_hours, total_checked = db_get_stats()
     laufzeit_session = format_duration(time.time() - status["start_time"])
-    finds = db_get_recent_finds(limit=100)
+    laufzeit_total_human = format_total_hours_human(total_hours)
 
+    # Zähler mit deutschem Tausenderpunkt
+    session_checked_de = format_int_de(status["checked"])
+    total_checked_de = format_int_de(total_checked)
+
+    finds = db_get_recent_finds(limit=100)
     rows = "".join(
-        f"<tr><td>{ts}</td><td>{typ}</td><td>{addr}</td><td>{bal:.8f}</td><td>{seed}</td></tr>"
+        f"<tr><td>{format_ts_de(ts)}</td><td>{typ}</td><td>{addr}</td>"
+        f"<td>{bal:.8f}</td><td>{seed}</td></tr>"
         for ts, typ, addr, bal, seed in finds
     )
 
@@ -268,6 +301,7 @@ def show_status():
 <head>
 <meta charset="utf-8" />
 <title>BTC Checker · v{__version__}</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
 <meta http-equiv="refresh" content="{refresh}">
 <style>
  body{{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;max-width:880px;margin:32px auto;padding:0 16px}}
@@ -297,17 +331,17 @@ def show_status():
     </div>
     <div class="card">
       <h3>🧮 Geprüfte Adressen (Session)</h3>
-      <div>{status['checked']:,}</div>
+      <div>{session_checked_de}</div>
       <small>Aktuelle Session</small>
     </div>
     <div class="card">
       <h3>🧭 Gesamt-Laufzeit</h3>
-      <div>{total_hours:.1f} h</div>
+      <div>{laufzeit_total_human}</div>
       <small>Kumuliert (aus DB)</small>
     </div>
     <div class="card">
       <h3>📦 Gesamt geprüfte Adressen</h3>
-      <div>{total_checked:,}</div>
+      <div>{total_checked_de}</div>
       <small>Kumuliert (aus DB)</small>
     </div>
   </div>
