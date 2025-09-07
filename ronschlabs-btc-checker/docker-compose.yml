@@ -1,5 +1,4 @@
 version: "3.7"
-
 services:
   app_proxy:
     environment:
@@ -7,9 +6,7 @@ services:
       APP_PORT: 5001
     logging:
       driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+      options: { max-size: "10m", max-file: "3" }
 
   app:
     image: ronschlabs/btc-checker:latest
@@ -18,9 +15,9 @@ services:
     restart: on-failure
     stop_grace_period: 1m
     environment:
-      BTC_MODE: umbrel          # ← neu: erzwingt /data
+      BTC_MODE: umbrel
+    volumes:
+      - ${APP_DATA_DIR}:/data   # <— DB liegt hier persistent
     logging:
       driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+      options: { max-size: "10m", max-file: "3" }
