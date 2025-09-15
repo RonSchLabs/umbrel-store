@@ -1,6 +1,6 @@
 # 🧠 BTC Checker – Umbrel App
 
-> **Version:** 3.2 (Docker-Image: `latest` + `3.2`)
+> **Version:** 3.3 (Docker-Image: `latest` + `3.3`)
 
 
 Ein Tool zur automatisierten Suche nach Bitcoin-Adressen mit Guthaben, basierend auf zufällig generierten Seeds. Zeigt Live-Statistiken direkt im Umbrel-Dashboard.

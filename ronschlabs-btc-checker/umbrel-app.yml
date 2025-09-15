@@ -4,7 +4,7 @@ name: "BTC Checker"
 tagline: "Live BTC-Wallet-Monitor"
 icon: "https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/icon.png"
 category: "Utilities"
-version: "3.2"
+version: "3.3"
 port: 5001
 description: >-
   Ein kleines Python-Tool zur Anzeige von BTC-Wallet-Informationen.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-BTC Checker – v3.2 (Cycle-Reset + 12M-Historie)
+BTC Checker – v3.3 (Cycle-Reset + 12M-Historie)
 - UI v4.1 Dark + DE-Zeit (Style unverändert)
 - Live-UI (ohne Page-Reload) für KPIs, Funde & Prüfprotokoll
 - Prüfprotokoll inkl. Typ & Guthaben
@@ -48,7 +48,7 @@ except Exception:
     TZ = None  # Fallback unten in now_de_str()
 
 # ----------------------------- Konfiguration ----------------------------------
-__version__ = "3.2"
+__version__ = "3.3"
 
 # --- UI / Scan ---
 ADDRESSES_PER_SEED = 10
@@ -835,60 +835,112 @@ def persist_loop(interval_sec: int = PERSIST_INTERVAL_SEC):
                 _persist_last_ts = now
                 _persist_last_checked = status["checked"]
 
+# --- Child-Derivation: deterministisch und schnell (kein BIP32, aber ausreichend für Zufallsscans)
+_CURVE_N = ecdsa.SECP256k1.generator.order()
+
+
 def suchroutine():
-    """Endlose Suche – adaptiv gedrosselt mit Token-Bucket, Pause-Toggle."""
-    mnemo = Mnemonic("english")
-    checked, found = 0, 0
-    io_cnt, nio_cnt = 0, 0
-    start = time.time()
+  """
+  Endlose Suche – adaptiv gedrosselt mit Token-Bucket, ohne Doppelprüfungen.
+  - Pro Seed werden KIND-Schlüssel (index-basiert) abgeleitet → neuer Pubkey je Iteration
+  - Aus jedem Pubkey werden P2SH & SegWit Adressen gebildet
+  - HTTP-/DB-Protokollierung passiert in check_balance()/db_*()
+  """
+  mnemo = Mnemonic("english")
 
-    # Schutz: wenn ENV fehlt → pausieren
-    if not BS_CLIENT_ID or not BS_CLIENT_SECRET:
-        print("WARN: BS_CLIENT_ID/BS_CLIENT_SECRET fehlen → Scanner pausiert. .env setzen!")
-        status["paused"] = True
+  # --- lokale Zähler für die Session ---
+  checked = 0
+  found = 0
+  io_cnt = 0
+  nio_cnt = 0
+  start_ts = time.time()
 
-    print("\n Starte endlose Suche (P2SH & SegWit) mit adaptiver Quota-Drossel (Token-Bucket)\n")
-    while True:
-        if status.get("paused"):
-            time.sleep(0.2)
-            continue
+  # Schutz: wenn ENV für Enterprise-API fehlt → pausieren
+  if not BS_CLIENT_ID or not BS_CLIENT_SECRET:
+    print("WARN: BS_CLIENT_ID/BS_CLIENT_SECRET fehlen → Scanner pausiert.")
+    status["paused"] = True
 
-        mnemonic = mnemo.generate(strength=256)
-        seed = mnemo.to_seed(mnemonic)
-        priv = derive_privkey(seed)
-        sk = ecdsa.SigningKey.from_string(priv, curve=ecdsa.SECP256k1)
-        vk = sk.verifying_key
-        pubkey = b"\x04" + vk.to_string()
+  # --- Helper: deterministische Child-Keys (leichtgewichtig, kein BIP32) ---
+  _CURVE_N = ecdsa.SECP256k1.generator.order()
 
-        for _ in range(ADDRESSES_PER_SEED):
-            for addr, typ in [(pubkey_to_p2sh(pubkey), "P2SH"),
-                              (pubkey_to_segwit(pubkey), "SegWit")]:
+  def derive_child_privkey(master: bytes, index: int) -> bytes:
+    raw = hmac.new(master, index.to_bytes(4, "big"), hashlib.sha256).digest()
+    k = int.from_bytes(raw, "big") % _CURVE_N
+    if k == 0:
+      k = 1
+    return k.to_bytes(32, "big")
 
-                if status.get("paused"):
-                    break
+  # einfache Duplikat-Sperre pro Lauf (sichert gegen Wiederholungen)
+  seen_addresses = set()
 
-                bal, http_status = check_balance(addr, typ)
+  while True:
+    # Pause-Button respektieren
+    if status.get("paused"):
+      time.sleep(0.2)
+      continue
 
-                checked += 1
-                if http_status == 200:
-                    io_cnt += 1
-                else:
-                    nio_cnt += 1
+    # Quota-/Token-Bucket-Steuerung (Block bis nächstes Fenster/token)
+    quota_mgr.wait_if_needed_before_request()
 
-                if bal > 0:
-                    found += 1
-                    ts = now_de_str()
-                    db_insert_find(ts, addr, typ, bal, mnemonic)
+    # ---- neuen Zufalls-Seed erzeugen und in Master-PrivKey wandeln ----
+    mnemonic = mnemo.generate(strength=256)  # 24 Wörter
+    # Aus den Wörtern ein 32-Byte Seed für unsere Ableitung gewinnen
+    seed_bytes = hashlib.sha256(mnemonic.encode("utf-8")).digest()
+    priv_master = derive_privkey(seed_bytes)  # nutzt HMAC("Bitcoin seed", ...)
 
-                status["checked"] = checked
-                status["io"] = io_cnt
-                status["nio"] = nio_cnt
-                elapsed = max(1e-6, (time.time() - start))
-                status["rate"] = checked / elapsed
-                status["found"] = found
+    # ---- für diesen Seed mehrere KIND-Schlüssel → einzigartige Adressen ----
+    for i in range(ADDRESSES_PER_SEED):
+      # pro Iteration neuer Child-Key -> neuer Pubkey -> neue Adressen
+      priv_i = derive_child_privkey(priv_master, i)
+      sk = ecdsa.SigningKey.from_string(priv_i, curve=ecdsa.SECP256k1)
+      vk = sk.verifying_key
+      pubkey = b"\x04" + vk.to_string()
 
-            if status.get("paused"):
-                break
+      candidates = [
+        (pubkey_to_p2sh(pubkey), "P2SH"),
+        (pubkey_to_segwit(pubkey), "SegWit"),
+      ]
+
+      for addr, typ in candidates:
+        # doppelte Adressen überspringen (Sicherheitsnetz)
+        if addr in seen_addresses:
+          continue
+        seen_addresses.add(addr)
+
+        # Balance prüfen (schreibt auch ins checks-Protokoll)
+        balance_btc, http_status = check_balance(addr, typ)
+        checked += 1
+        if http_status == 200:
+          io_cnt += 1
+        else:
+          nio_cnt += 1
+
+        # Fund speichern
+        if balance_btc > 0.0:
+          found += 1
+          db_insert_find(
+            ts=now_de_str(),  # DE-Format "DD.MM.YYYY HH:MM:SS"
+            addr=addr,
+            typ=typ,
+            balance=balance_btc,
+            seed=mnemonic,
+          )
+
+        # Live-Status für UI aktualisieren
+        elapsed = max(0.001, time.time() - start_ts)
+        status["checked"] = checked
+        status["found"] = found
+        status["io"] = io_cnt
+        status["nio"] = nio_cnt
+        status["rate"] = checked / elapsed
+
+        # Sicherheitsbremse: zu viele Fehler am Stück → kurze Pause
+        if http_status is None or (isinstance(http_status, int) and http_status >= 500):
+          time.sleep(0.1)
+
+    # kleine Luft holen zwischen Seeds, damit UI/DB hinterherkommt
+    time.sleep(0.01)
+
 
 # --------------------------------- Web-API (JSON) -----------------------------
 @app.route("/favicon.ico")
