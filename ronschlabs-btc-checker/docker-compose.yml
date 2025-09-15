@@ -1,23 +1,33 @@
 version: "3.7"
+
 services:
   app_proxy:
+    image: getumbrel/app-proxy:1.0.0
+    restart: unless-stopped
     environment:
       APP_HOST: ronschlabs-btc-checker_app_1
       APP_PORT: 5001
+    ports:
+      - "5001:5001"
     logging:
       driver: json-file
-      options: { max-size: "10m", max-file: "3" }
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   app:
-    image: ronschlabs/btc-checker:latest
+    image: ronschlabs/btc-checker:latest   # später optional auf :v3.2 pinnen
     user: "1000:1000"
     init: true
     restart: on-failure
     stop_grace_period: 1m
     environment:
       BTC_MODE: umbrel
+      TZ: Europe/Berlin
     volumes:
-      - ${APP_DATA_DIR}:/data   # <— DB liegt hier persistent
+      - ${APP_DATA_DIR}:/data
     logging:
       driver: json-file
-      options: { max-size: "10m", max-file: "3" }
+      options:
+        max-size: "10m"
+        max-file: "3"
