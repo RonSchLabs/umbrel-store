@@ -1,4 +1,3 @@
-# ronschlabs-btc-checker/Dockerfile
 FROM python:3.11-slim
 
 ENV PYTHONUNBUFFERED=1 \
@@ -7,11 +6,11 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Zeitzone (für korrekte Europe/Berlin-Zeit)
+# Zeitzone (für Europe/Berlin)
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata \
  && rm -rf /var/lib/apt/lists/*
 
-# Python-Abhängigkeiten (alle sind pure-Python → kein build-essential nötig)
+# Python-Abhängigkeiten (alles pure-Python; kein build-essential nötig)
 RUN pip install --no-cache-dir \
     flask \
     requests \
@@ -21,9 +20,10 @@ RUN pip install --no-cache-dir \
     bech32 \
     python-dotenv
 
-# App-Code kopieren
-COPY ronschlabs-btc-checker/app/app.py /app/app.py
-COPY ronschlabs-btc-checker/app/static /app/static
+# WICHTIG: Build-Kontext ist ./ronschlabs-btc-checker
+# => also nur 'app/…' kopieren, nicht 'ronschlabs-btc-checker/app/…'
+COPY app/app.py /app/app.py
+COPY app/static /app/static
 
 EXPOSE 5001
 CMD ["python", "app.py"]
