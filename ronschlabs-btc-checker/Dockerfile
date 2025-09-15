@@ -1,30 +1,29 @@
-# Basis-Image
+# ronschlabs-btc-checker/Dockerfile
 FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    TZ=Europe/Berlin
 
 WORKDIR /app
 
-# System-Build-Tools (bei Bedarf minimal)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
+# Zeitzone (für korrekte Europe/Berlin-Zeit)
+RUN apt-get update && apt-get install -y --no-install-recommends tzdata \
  && rm -rf /var/lib/apt/lists/*
 
-# Python-Abhängigkeiten
-# (sqlite3 ist in der stdlib, kein pip nötig)
+# Python-Abhängigkeiten (alle sind pure-Python → kein build-essential nötig)
 RUN pip install --no-cache-dir \
     flask \
     requests \
     ecdsa \
     base58 \
     mnemonic \
-    bech32
+    bech32 \
+    python-dotenv
 
 # App-Code kopieren
-# (Struktur: /app/app.py + /app/static/icon.png)
-COPY app/app.py /app/app.py
-COPY app/static /app/static
+COPY ronschlabs-btc-checker/app/app.py /app/app.py
+COPY ronschlabs-btc-checker/app/static /app/static
 
-# Port
 EXPOSE 5001
-
-# Start
 CMD ["python", "app.py"]
