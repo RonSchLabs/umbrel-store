@@ -2,7 +2,7 @@ manifestVersion: 1
 id: ronschlabs-btc-checker
 name: "BTC Checker"
 tagline: "Live BTC-Wallet-Monitor"
-icon: "./icon.png"
+icon: "https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/icon.png"
 category: "Utilities"
 version: "3.3"
 port: 5001
@@ -15,7 +15,7 @@ submitter: "RonSch"
 repo: "https://github.com/RonSchLabs/umbrel-store"
 support: "https://github.com/RonSchLabs/umbrel-store/issues"
 gallery:
-  - "./screenshot.png"
+  - "https://raw.githubusercontent.com/RonSchLabs/umbrel-store/master/ronschlabs-btc-checker/screenshot.png"
 releaseNotes: >-
   - Neue SQLite-Datenbank (statt TXT-Datei)
   - Session- und Gesamt-Statistik
